@@ -32,9 +32,14 @@ button.p:hover{background:var(--crimson-h)}
 .seg button,.tabs button{flex:1;min-width:0;height:34px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .seg button.on,.tabs button.on{background:var(--blush);border-color:#d98f9b;color:var(--maroon)}
 .row{display:flex;gap:8px;align-items:center;margin:0 0 16px;flex-wrap:wrap}
-.row.c input{flex:1;max-width:190px;text-align:center}
+.row.c .dw{flex:1;max-width:190px}
 .row.c button{height:34px}
 .tabs{margin-bottom:6px}
+.dw{position:relative;display:block}
+.dw input{position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer}
+.dv{display:block;min-height:40px;padding:9px 12px;background:#fff;border:1px solid var(--line2);border-radius:8px;font-size:15px;font-weight:400;letter-spacing:0;text-transform:none;color:var(--ink)}
+.dv.c{text-align:center}.dv.ph{color:#9a8f92}
+.dw:focus-within .dv{border-color:var(--crimson);box-shadow:0 0 0 3px rgba(167,29,49,.15)}
 .card{background:#fff;border:0;border-top:1px solid var(--line);padding:14px 0}
 .t{display:flex;gap:12px;align-items:center}
 .t .b{flex:1;min-width:0}
@@ -74,7 +79,7 @@ form button.p{height:38px;font-size:14px}
 <div class="layout"><section>
 <div class="row c">
   <button id="prev">‹</button>
-  <input type="date" id="day">
+  <span class="dw"><span class="dv c" id="v_day"></span><input type="date" id="day"></span>
   <button id="next">›</button>
   <button id="today">Today</button>
 </div>
@@ -93,12 +98,12 @@ form button.p{height:38px;font-size:14px}
   <form id="f" style="margin-top:10px">
     <label class="f">Task<input id="ti" required maxlength="120" placeholder="e.g. Take out the trash"></label>
     <label>Assign to<select id="as"></select></label>
-    <label>Date<input type="date" id="dt" required></label>
+    <label>Date<span class="dw"><span class="dv" id="v_dt"></span><input type="date" id="dt" required></span></label>
     <label>Repeat<select id="rp">
       <option value="none">Does not repeat</option><option value="daily">Every day</option>
       <option value="weekdays">Weekdays (Mon–Fri)</option><option value="weekly">Every week</option>
       <option value="monthly">Every month</option></select></label>
-    <label>Repeat until (optional)<input type="date" id="un"></label>
+    <label>Repeat until (optional)<span class="dw"><span class="dv" id="v_un"></span><input type="date" id="un"></span></label>
     <label class="f">Auto-close at (optional; blank = end of day)<input type="time" id="ct"></label>
     <button class="p f">Add task</button>
   </form>
@@ -146,7 +151,12 @@ const doneRec = (t,d) => done.find(r => r.taskId===t.id && r.date===d);
 const esc = s => s.replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const RP = {none:'',daily:'🔁 daily',weekdays:'🔁 weekdays',weekly:'🔁 weekly',monthly:'🔁 monthly'};
 
+const fmtD = s => s ? new Date(s+'T00:00').toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}) : '';
+function paintDates(){ ['day','dt','un'].forEach(k => { const v = $('v_'+k), s = $(k).value;
+  v.textContent = s ? fmtD(s) : 'Optional'; v.classList.toggle('ph', !s); }); }
+document.querySelectorAll('.dw input').forEach(i => { i.addEventListener('click', () => { try{ i.showPicker() }catch(e){} }); i.addEventListener('input', paintDates); });
 function render(){
+  paintDates();
   const me = $('me').value, d = $('day').value;
   let items = tasks.filter(t => occurs(t,d) && !doneRec(t,d));
   if (view==='mine') items = items.filter(t => t.assignee===me);
@@ -215,6 +225,7 @@ $('tabs').onclick = e => { if(!e.target.dataset.v) return; view = e.target.datas
   [...$('tabs').children].forEach(b => b.classList.toggle('on', b===e.target)); render(); };
 
 if (innerWidth >= 800) $('addbox').open = true;
+paintDates();
 load(); setInterval(load, 60000); // refresh every minute (also updates auto-close)
 </script>
 </body>
