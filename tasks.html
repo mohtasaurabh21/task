@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Family Tasks</title>
+<style>
+:root{--tx:#0c2a43;--mut:#4f6f8a;--ac:#0284c7;--ac2:#38bdf8;--glass:rgba(255,255,255,.55);--gb:rgba(255,255,255,.75);--sh:0 8px 32px rgba(3,105,161,.18);--warn:#b45309;--bad:#be123c;--ok:#0f766e;color-scheme:light dark}
+@media(prefers-color-scheme:dark){:root{--tx:#e6f4ff;--mut:#9cc2de;--ac:#38bdf8;--ac2:#0ea5e9;--glass:rgba(15,45,75,.5);--gb:rgba(125,211,252,.22);--sh:0 8px 32px rgba(0,0,0,.4);--warn:#fbbf24;--bad:#fb7185;--ok:#5eead4}}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;color:var(--tx);font:16px/1.45 "Segoe UI",system-ui,-apple-system,sans-serif;background:linear-gradient(160deg,#e0f7ff 0%,#bae6fd 45%,#7dd3fc 100%) fixed}
+@media(prefers-color-scheme:dark){body{background:linear-gradient(160deg,#071a2e 0%,#0b3a5e 55%,#0c5a8a 100%) fixed}}
+main{max-width:1040px;margin:0 auto;padding:20px 16px 40px}
+header{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:6px}
+h1{font-size:1.6rem;margin:0;font-weight:700;letter-spacing:-.5px}
+.layout{display:grid;gap:18px;grid-template-columns:1fr}
+@media(min-width:800px){.layout{grid-template-columns:minmax(0,1.4fr) minmax(300px,1fr);align-items:start}aside{position:sticky;top:16px}}
+select,input{font:inherit;color:var(--tx);background:rgba(255,255,255,.45);border:1px solid var(--gb);border-radius:12px;padding:10px 12px;outline:none;backdrop-filter:blur(8px);min-height:44px;width:100%}
+@media(prefers-color-scheme:dark){select,input{background:rgba(8,30,52,.5)}}
+select:focus,input:focus{border-color:var(--ac);box-shadow:0 0 0 3px rgba(56,189,248,.35)}
+.who{display:flex;align-items:center;gap:10px;flex:1 1 100%}
+.who>span{font-weight:600;color:var(--mut);white-space:nowrap}
+.seg{display:flex;flex-wrap:nowrap;gap:6px;flex:1;background:var(--glass);border:1px solid var(--gb);border-radius:14px;padding:4px;backdrop-filter:blur(14px);box-shadow:var(--sh)}
+.seg button{flex:1;min-width:0;padding:2px 6px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;border-color:transparent;background:transparent;box-shadow:none;backdrop-filter:none}
+.seg button.on{color:#fff;font-weight:600;background:linear-gradient(180deg,rgba(125,225,255,.95),var(--ac));box-shadow:0 3px 10px rgba(2,132,199,.4),inset 0 1px 0 rgba(255,255,255,.6)}
+@media(min-width:800px){.who{flex:0 1 520px}h1{flex:1}}
+button{font:inherit;color:var(--tx);cursor:pointer;min-height:24px;padding:2px 12px;font-size:.85rem;line-height:1.3;border-radius:10px;border:1px solid var(--gb);background:linear-gradient(180deg,rgba(255,255,255,.7),rgba(255,255,255,.25));backdrop-filter:blur(10px);box-shadow:0 2px 10px rgba(3,105,161,.15),inset 0 1px 0 rgba(255,255,255,.8);transition:transform .12s,box-shadow .12s}
+@media(prefers-color-scheme:dark){button{background:linear-gradient(180deg,rgba(125,211,252,.28),rgba(125,211,252,.08))}}
+button:hover{transform:translateY(-1px);box-shadow:0 6px 16px rgba(3,105,161,.25),inset 0 1px 0 rgba(255,255,255,.8)}
+button:active{transform:translateY(1px)}
+button.p{color:#fff;font-weight:600;border-color:rgba(255,255,255,.6);background:linear-gradient(180deg,rgba(125,225,255,.95),var(--ac) 55%,#0369a1);text-shadow:0 1px 2px rgba(0,60,100,.4);box-shadow:0 4px 14px rgba(2,132,199,.45),inset 0 1px 0 rgba(255,255,255,.7)}
+.row{display:flex;gap:8px;align-items:center;margin:12px 0;flex-wrap:wrap}
+.row.c{justify-content:center}.row.c input{width:auto;flex:1;max-width:200px;text-align:center}
+.tabs{background:var(--glass);border:1px solid var(--gb);border-radius:14px;padding:4px;backdrop-filter:blur(14px);box-shadow:var(--sh)}
+.tabs button{flex:1;border-color:transparent;background:transparent;box-shadow:none;backdrop-filter:none}
+.tabs button.on{color:#fff;font-weight:600;background:linear-gradient(180deg,rgba(125,225,255,.95),var(--ac));box-shadow:0 3px 10px rgba(2,132,199,.4),inset 0 1px 0 rgba(255,255,255,.6)}
+.card{background:var(--glass);border:1px solid var(--gb);border-radius:20px;padding:14px 16px;margin:10px 0;backdrop-filter:blur(16px) saturate(1.3);-webkit-backdrop-filter:blur(16px) saturate(1.3);box-shadow:var(--sh)}
+.t{display:flex;gap:12px;align-items:center}
+.t .b{flex:1;min-width:0}.t .ti{font-weight:600;font-size:1.05rem;word-break:break-word}.t small{color:var(--mut)}
+.t.done .ti{text-decoration:line-through;color:var(--mut)}
+.dn{flex:none;padding:2px 14px}
+.meta{display:flex;align-items:center;flex-wrap:wrap;gap:4px 10px;margin-top:2px}
+.tag{display:inline-block;font-size:.75rem;font-weight:600;border:1px solid currentColor;border-radius:20px;padding:1px 10px;background:rgba(255,255,255,.35)}
+.tag.w{color:var(--warn)}.tag.g{color:var(--ok)}.tag.x{color:var(--bad)}
+details summary{cursor:pointer;font-size:1.05rem;list-style:none}
+details summary::-webkit-details-marker{display:none}
+form{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px}
+form .f{grid-column:1/-1}
+@media(max-width:480px){form{grid-template-columns:1fr}}
+label{font-size:.8rem;font-weight:600;color:var(--mut);display:flex;flex-direction:column;gap:4px}
+.del{min-height:24px;padding:2px 8px;border-radius:10px}
+#msg{color:var(--bad);font-size:.9rem;font-weight:600}
+.empty{text-align:center;color:var(--mut);padding:36px 12px}
+</style>
+</head>
+<body>
+<main>
+<header>
+  <h1>Family Tasks</h1>
+  <select id="me" hidden></select>
+  <div class="who"><span>I am</span><div class="seg" id="meBtns"></div></div>
+</header>
+<div id="msg"></div>
+
+<div class="layout"><section>
+<div class="row c">
+  <button id="prev">‹</button>
+  <input type="date" id="day">
+  <button id="next">›</button>
+  <button id="today">Today</button>
+</div>
+
+<div class="row tabs" id="tabs">
+  <button data-v="mine" class="on">For me</button>
+  <button data-v="by">I assigned</button>
+  <button data-v="all">Everyone</button>
+</div>
+
+<div id="list"></div>
+
+</section><aside>
+<details class="card" id="addbox">
+  <summary><b>➕ Add a task</b></summary>
+  <form id="f" style="margin-top:10px">
+    <label class="f">Task<input id="ti" required maxlength="120" placeholder="e.g. Take out the trash"></label>
+    <label>Assign to<select id="as"></select></label>
+    <label>Date<input type="date" id="dt" required></label>
+    <label>Repeat<select id="rp">
+      <option value="none">Does not repeat</option><option value="daily">Every day</option>
+      <option value="weekdays">Weekdays (Mon–Fri)</option><option value="weekly">Every week</option>
+      <option value="monthly">Every month</option></select></label>
+    <label>Repeat until (optional)<input type="date" id="un"></label>
+    <label class="f">Auto-close at (optional; blank = end of day)<input type="time" id="ct"></label>
+    <button class="p f">Add task</button>
+  </form>
+</details>
+</aside></div>
+</main>
+
+<script>
+// 1) Paste your Apps Script Web App URL here:
+const API = 'https://script.google.com/macros/s/AKfycbw3-ttHOKNieYo9pv9UpadABC93__mwXOi4EwHknmxzXQgviVtrWpJAeGOQFXmaejhp/exec';
+const PEOPLE = ['Sourabh','Vranda','Girisha','Disha'];
+
+const $ = id => document.getElementById(id);
+let tasks = [], done = [], view = 'mine';
+const ymd = d => d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+const store = { get:k=>{try{return localStorage.getItem(k)}catch(e){return null}}, set:(k,v)=>{try{localStorage.setItem(k,v)}catch(e){}} };
+
+PEOPLE.forEach(p => { $('me').add(new Option(p,p)); $('as').add(new Option(p,p)); });
+$('me').value = store.get('me') || PEOPLE[0];
+function paintMe(){ $('meBtns').innerHTML = PEOPLE.map(p => `<button type="button" class="${p===$('me').value?'on':''}" data-p="${p}">${p}</button>`).join(''); }
+$('meBtns').onclick = e => { const p = e.target.dataset.p; if (!p) return; $('me').value = p; $('me').onchange(); };
+paintMe();
+$('day').value = $('dt').value = ymd(new Date());
+
+function occurs(t, d){
+  if (d < t.start || (t.until && d > t.until)) return false;
+  const a = new Date(t.start+'T00:00'), b = new Date(d+'T00:00');
+  const diff = Math.round((b-a)/864e5);
+  switch(t.repeat){
+    case 'daily': return true;
+    case 'weekdays': return b.getDay()%6 !== 0;
+    case 'weekly': return diff%7 === 0;
+    case 'monthly': return a.getDate() === b.getDate();
+    default: return diff === 0;
+  }
+}
+function autoClosed(t, d){
+  const now = new Date(), today = ymd(now);
+  if (d < today) return true;
+  if (d > today) return false;
+  const hm = String(now.getHours()).padStart(2,'0')+':'+String(now.getMinutes()).padStart(2,'0');
+  return hm >= (t.closeTime || '23:59');
+}
+const doneRec = (t,d) => done.find(r => r.taskId===t.id && r.date===d);
+const esc = s => s.replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const RP = {none:'',daily:'🔁 daily',weekdays:'🔁 weekdays',weekly:'🔁 weekly',monthly:'🔁 monthly'};
+
+function render(){
+  const me = $('me').value, d = $('day').value;
+  let items = tasks.filter(t => occurs(t,d) && !doneRec(t,d));
+  if (view==='mine') items = items.filter(t => t.assignee===me);
+  if (view==='by') items = items.filter(t => t.creator===me);
+  $('list').innerHTML = items.length ? items.map(t => {
+    const r = doneRec(t,d), ac = !r && autoClosed(t,d), mine = t.assignee===me;
+    const st = r ? `<span class="tag g">✓ done${r.by!==t.assignee?' by '+r.by:''}</span>`
+      : ac ? `<span class="tag x">auto-closed ${t.closeTime||''}</span>`
+      : `<span class="tag w">open${t.closeTime?' · closes '+t.closeTime:''}</span>`;
+    const btn = mine && !ac
+      ? `<button class="p dn" onclick="finish('${t.id}','${d}')">Done</button>`
+      : '';
+    return `<div class="card t ${r||ac?'done':''}">${btn}<div class="b">
+      <div class="ti">${esc(t.title)}</div>
+      <div class="meta"><small>${t.assignee} · from ${t.creator} ${RP[t.repeat]?'· '+RP[t.repeat]:''}</small>${st}</div></div>
+      ${t.creator===me?`<button class="del" onclick="del('${t.id}')" title="Delete">🗑</button>`:''}</div>`;
+  }).join('') : '<div class="empty">Nothing here for this day 🎉</div>';
+}
+
+async function load(){
+  if (API.startsWith('PASTE')) { $('msg').textContent = 'Set the API URL in index.html (see setup steps).'; return; }
+  try {
+    const r = await (await fetch(API)).json();
+    const fix = (v, time) => { if (!v || !/GMT|T\d\d:/.test(v)) return v; const d = new Date(v);
+      return isNaN(d) ? v : time ? String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0') : ymd(d); };
+    tasks = r.tasks.map(t => ({...t, start:fix(t.start), until:fix(t.until), closeTime:fix(t.closeTime,true)}));
+    done = r.done.map(x => ({...x, date:fix(x.date)})); $('msg').textContent = ''; render();
+  } catch(e){ $('msg').textContent = 'Could not reach Google Sheet. Check the URL and deployment access.'; }
+}
+async function send(body){
+  try { await fetch(API,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify(body)}); }
+  catch(e){ $('msg').textContent = 'Save failed — reloading.'; }
+  load();
+}
+
+function finish(id,d){
+  const t = tasks.find(x => x.id===id), me = $('me').value;
+  if (t.repeat === 'none') { tasks = tasks.filter(x => x!==t); send({action:'delete',taskId:id}); }
+  else { done.push({taskId:id,date:d,by:me}); send({action:'complete',taskId:id,date:d,by:me}); }
+  render();
+}
+function del(id){
+  if (!confirm('Delete this task (and all its repeats)?')) return;
+  tasks = tasks.filter(t => t.id!==id); render(); send({action:'delete',taskId:id});
+}
+
+$('f').onsubmit = e => {
+  e.preventDefault();
+  const t = { id:'t'+Date.now().toString(36)+Math.random().toString(36).slice(2,5), title:$('ti').value.trim(),
+    assignee:$('as').value, creator:$('me').value, start:$('dt').value, repeat:$('rp').value,
+    until:$('un').value, closeTime:$('ct').value, created:new Date().toISOString() };
+  if (!t.title) return;
+  const n = new Date(), hm = String(n.getHours()).padStart(2,'0')+':'+String(n.getMinutes()).padStart(2,'0');
+  if (t.start === ymd(n) && t.closeTime && t.closeTime <= hm) {
+    alert('That auto-close time has already passed today, so the task would close immediately. Pick a later time or leave it blank.'); return;
+  }
+  tasks.push(t); $('day').value = t.start; render(); send({action:'add',task:t});
+  $('ti').value=''; if (innerWidth < 800) $('addbox').open = false;
+};
+const shift = n => { const d = new Date($('day').value+'T00:00'); d.setDate(d.getDate()+n); $('day').value = ymd(d); render(); };
+$('prev').onclick = () => shift(-1); $('next').onclick = () => shift(1);
+$('today').onclick = () => { $('day').value = ymd(new Date()); render(); };
+$('day').onchange = render;
+$('me').onchange = () => { store.set('me',$('me').value); paintMe(); render(); };
+$('tabs').onclick = e => { if(!e.target.dataset.v) return; view = e.target.dataset.v;
+  [...$('tabs').children].forEach(b => b.classList.toggle('on', b===e.target)); render(); };
+
+if (innerWidth >= 800) $('addbox').open = true;
+load(); setInterval(load, 60000); // refresh every minute (also updates auto-close)
+</script>
+</body>
+</html>
